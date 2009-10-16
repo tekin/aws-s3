@@ -189,10 +189,10 @@ module AWS
         # Updates the object with <tt>key</tt> by copying it in-place, preserving the ACL of the existing object.
         # Useful for updating an object's metadata without having to re-PUT the data.
         def update(key, bucket = nil, options = {})
-          bucket     = bucket_name(bucket)
-          source_key = path!(bucket, key)
+          bucket          = bucket_name(bucket)
+          source_key      = path!(bucket, key)
           default_options = {'x-amz-copy-source' => source_key, 'x-amz-metadata-directive' => 'REPLACE'}
-          returning put(source_key, default_options.merge(options)) do
+          returning put(source_key, options.merge(default_options)) do
             acl(key, bucket, acl(key, bucket))
           end
         end
