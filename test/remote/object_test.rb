@@ -157,7 +157,7 @@ class RemoteS3ObjectTest < Test::Unit::TestCase
     
     response = fetch_object_at(object.url)
     assert (200..299).include?(response.code.to_i)
-    
+
     # Copy the object
     
     assert_nothing_raised do
@@ -363,6 +363,23 @@ class RemoteS3ObjectTest < Test::Unit::TestCase
     end
   end
   
+  def test_updating_an_object_should_replace_its_metadata
+    key = 'updated-object'
+
+    S3Object.store(key, 'value does not matter', TEST_BUCKET)
+    object = S3Object.find(key, TEST_BUCKET)
+
+    object.content_type = 'foo/bar'
+    object.metadata[:foo] = 'bar'
+    object.update
+
+    reloaded_object = S3Object.find(key, TEST_BUCKET)
+    assert_equal 'foo/bar', reloaded_object.content_type
+    assert_equal 'bar', reloaded_object.metadata[:foo]
+  ensure
+    S3Object.delete(key, TEST_BUCKET)
+  end
+
   private
     def fetch_object_at(url)
       Net::HTTP.get_response(URI.parse(url))
