@@ -212,7 +212,17 @@ namespace :test do
     show_test_coverage_results
   end
   
-  Rake::TestTask.new(:remote) do |test|
+  namespace :remote do
+    task :preflight_check do
+      required_vars = %w(AMAZON_ACCESS_KEY_ID AMAZON_SECRET_ACCESS_KEY TEST_BUCKET)
+
+      if (missing_vars = required_vars.select { |k| ENV[k].nil? }).any?
+        abort 'You must set ' + missing_vars.join(', ')
+      end
+    end
+  end
+
+  Rake::TestTask.new(:remote => 'remote:preflight_check') do |test|
     test.pattern = 'test/remote/*_test.rb'
     test.verbose = true
   end
