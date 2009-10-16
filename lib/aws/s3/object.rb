@@ -552,7 +552,7 @@ module AWS
         self.class.update(key, bucket.name, about.to_headers)
       end
 
-      # Deletes the current object. Trying to save an object after it has been deleted with
+      # Deletes the current object. Trying to save an object after it has been deleted will
       # raise a DeletedObject exception.
       def delete
         bucket.update(:deleted, self)
