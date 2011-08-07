@@ -10,7 +10,7 @@ module AWS
           path = path.remove_extended unless path.valid_utf8?
 
           # Escape square brackets and single quotes
-          URI.escape(path).gsub(/[\[\]']/) { |m| "%%%02x" % m[0] }
+          URI.escape(path).gsub(/[\[\]']/) { |m| "%%%02x" % m[0].ord }
         end
       end
       
