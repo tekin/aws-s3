@@ -124,7 +124,9 @@ module AWS
           
           # Keep in alphabetical order
           def build
-            "AWSAccessKeyId=#{access_key_id}&Expires=#{expires}&Signature=#{encoded_canonical}"
+            returning "AWSAccessKeyId=#{access_key_id}&Expires=#{expires}&Signature=#{encoded_canonical}" do |string|
+              string << "&response-content-disposition=#{URI::escape(options[:response_content_disposition])}" if options[:response_content_disposition]
+            end
           end
       end
       
