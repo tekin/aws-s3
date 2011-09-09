@@ -295,6 +295,13 @@ module AWS
         #                    'marcel',
         #                    :authenticated => false)
         #   # => http://s3.amazonaws.com/marcel/beluga_baby.jpg
+        #
+        # You can also specify the content-disposition for the response from S3:
+        #
+        #   S3Object.url_for('beluga_baby.jpg',
+        #                    'marcel',
+        #                    :response_content_disposition => 'attachment; filename=download.jpg')
+        #
         def url_for(name, bucket = nil, options = {})
           connection.url_for(path!(bucket, name, options), options) # Do not normalize options
         end
