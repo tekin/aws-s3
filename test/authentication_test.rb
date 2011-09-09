@@ -89,7 +89,13 @@ class CanonicalStringTest < Test::Unit::TestCase
       assert_equal expected_cleaned_path, Authentication::CanonicalString.new(Net::HTTP::Get.new(uncleaned_path)).send(:path)
     end
   end
-  
+
+  def test_path_includes_response_content_disposition
+    request = Net::HTTP::Get.new('/test/query/string')
+    options = { :response_content_disposition => 'attachment; filename=file.jpg' }
+    assert_equal '/test/query/string?response-content-disposition=attachment; filename=file.jpg', Authentication::CanonicalString.new(request, options).send(:path)
+  end
+
   def test_default_headers_set
     Authentication::CanonicalString.default_headers.each do |header|
       assert @canonical_string.headers.include?(header)

@@ -63,6 +63,7 @@ module AWS
           def canonical_string            
             options = {}
             options[:expires] = expires if expires?
+            options[:response_content_disposition] = @options[:response_content_disposition]
             CanonicalString.new(request, options)
           end
           memoized :canonical_string
@@ -207,13 +208,18 @@ module AWS
           end
 
           def path
-            [only_path, extract_significant_parameter].compact.join('?')
+            params = [extract_significant_parameter, extract_response_params].compact.join('&')
+            [only_path, params].compact.reject { |s| s.empty? }.join('?')
           end
           
           def extract_significant_parameter
             request.path[/[&?](acl|torrent|logging)(?:&|=|$)/, 1]
           end
-          
+
+          def extract_response_params
+            "response-content-disposition=#{@options[:response_content_disposition]}" unless @options[:response_content_disposition].nil?
+          end
+
           def only_path
             request.path[/^[^?]*/]
           end
