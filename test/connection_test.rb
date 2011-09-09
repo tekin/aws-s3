@@ -111,6 +111,14 @@ class ConnectionTest < Test::Unit::TestCase
     assert connection.http.proxy?
   end
   
+  def test_prepare_path_should_escape_square_brackets
+    assert_equal 'square%5bbrackets%5d', Connection.prepare_path('square[brackets]')
+  end
+
+  def test_prepare_path_should_escape_single_quotes
+    assert_equal 'single%27quotes%27', Connection.prepare_path(%(single'quotes'))
+  end
+
   def test_request_only_escapes_the_path_the_first_time_it_runs_and_not_subsequent_times
     connection     = Connection.new(@keys)
     unescaped_path = 'path with spaces'

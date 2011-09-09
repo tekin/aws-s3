@@ -7,7 +7,7 @@ begin
 rescue LoadError
 end
 
-TEST_BUCKET = 'aws-s3-tests'
+TEST_BUCKET = ENV['TEST_BUCKET']
 TEST_FILE   = File.dirname(__FILE__) + '/test_file.data'
 
 class Test::Unit::TestCase

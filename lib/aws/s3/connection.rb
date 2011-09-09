@@ -8,7 +8,9 @@ module AWS
         
         def prepare_path(path)
           path = path.remove_extended unless path.valid_utf8?
-          URI.escape(path)
+
+          # Escape square brackets and single quotes
+          URI.escape(path).gsub(/[\[\]']/) { |m| "%%%02x" % m[0].ord }
         end
       end
       
@@ -51,7 +53,7 @@ module AWS
         else
           http.start(&requester)
         end
-      rescue Errno::EPIPE, Timeout::Error, Errno::EINVAL, EOFError
+      rescue Errno::EPIPE, Timeout::Error, Errno::EINVAL, EOFError, Errno::ECONNRESET, SocketError
         @http = create_connection
         attempts == 3 ? raise : (attempts += 1; retry)
       end

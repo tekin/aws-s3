@@ -53,7 +53,7 @@ AWS::S3::Parsing.parser =
     # have to use a version greater than '0.3.8.2'.
     raise LoadError unless XML::Parser::VERSION > '0.3.8.2'
     $:.push(File.join(File.dirname(__FILE__), '..', '..', 'support', 'faster-xml-simple', 'lib'))
-    require_library_or_gem 'faster_xml_simple' 
+    require 'faster_xml_simple'
     FasterXmlSimple
   rescue LoadError
     XmlSimple

@@ -180,8 +180,11 @@ class FasterXmlSimple
     end
 end
 
-class XmlSimple # :nodoc:
-  def self.xml_in(*args)
-    FasterXmlSimple.xml_in *args
-  end
-end
+# Don't overwrite XmlSimple.xml_in since FasterXmlSimple's implementation isn't
+# 100% compatible.
+#
+# class XmlSimple # :nodoc:
+#   def self.xml_in(*args)
+#     FasterXmlSimple.xml_in *args
+#   end
+# end

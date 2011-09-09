@@ -75,9 +75,6 @@ module AWS
     #   song.content_type = 'application/pdf'
     #   song.store
     # 
-    # (Keep in mind that due to limitiations in S3's exposed API, the only way to change things like the content_type
-    # is to PUT the object onto S3 again. In the case of large files, this will result in fully re-uploading the file.)
-    # 
     # A bevie of information about an object can be had using the <tt>about</tt> method:
     # 
     #   pp song.about
@@ -188,7 +185,18 @@ module AWS
             acl(copy_key, bucket, acl(key, bucket)) if options[:copy_acl]
           end
         end
-        
+
+        # Updates the object with <tt>key</tt> by copying it in-place, preserving the ACL of the existing object.
+        # Useful for updating an object's metadata without having to re-PUT the data.
+        def update(key, bucket = nil, options = {})
+          bucket          = bucket_name(bucket)
+          source_key      = path!(bucket, key)
+          default_options = {'x-amz-copy-source' => source_key, 'x-amz-metadata-directive' => 'REPLACE'}
+          returning put(source_key, options.merge(default_options)) do
+            acl(key, bucket, acl(key, bucket))
+          end
+        end
+
         # Rename the object with key <tt>from</tt> to have key in <tt>to</tt>.
         def rename(from, to, bucket = nil, options = {})
           copy(from, to, bucket, options)
@@ -538,8 +546,13 @@ module AWS
       end
       alias_method :create, :store
       alias_method :save,   :store
-      
-      # Deletes the current object. Trying to save an object after it has been deleted with
+
+      # Updates the the current object by copying it in place.
+      def update
+        self.class.update(key, bucket.name, about.to_headers)
+      end
+
+      # Deletes the current object. Trying to save an object after it has been deleted will
       # raise a DeletedObject exception.
       def delete
         bucket.update(:deleted, self)
@@ -547,8 +560,7 @@ module AWS
         self.class.delete(key, bucket.name)
       end
       
-      # Copies the current object, given it the name <tt>copy_name</tt>. Keep in mind that due to limitations in 
-      # S3's API, this operation requires retransmitting the entire object to S3.
+      # Copies the current object, giving it the name <tt>copy_name</tt>.
       def copy(copy_name, options = {})
         self.class.copy(key, copy_name, bucket.name, options)
       end
