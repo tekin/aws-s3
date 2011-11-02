@@ -105,7 +105,12 @@ class ConnectionTest < Test::Unit::TestCase
 
   def test_url_for_with_response_content_disposition
     connection = Connection.new(:access_key_id => '123', :secret_access_key => 'abc', :port => 80)
-    assert_match %r(\&response-content-disposition=attachment;%20filename=file.jpg$), connection.url_for('/foo', :response_content_disposition => 'attachment; filename=file.jpg')
+    assert_match %r(&response-content-disposition=attachment%3B\+filename%3Dfile.jpg), connection.url_for('/foo', :response_content_disposition => 'attachment; filename=file.jpg')
+  end
+
+  def test_url_for_escapes_response_content_disposition
+    connection = Connection.new(:access_key_id => '123', :secret_access_key => 'abc', :port => 80)
+    assert_match %r(&response-content-disposition=attachment%3B\+filename%3Dfile%26bob.jpg), connection.url_for('/foo', :response_content_disposition => 'attachment; filename=file&bob.jpg')
   end
 
   def test_connecting_through_a_proxy
