@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
-require "rake/gempackagetask"
+require 'rdoc/task'
+require "rubygems/package_task"
 
 require File.dirname(__FILE__) + '/lib/aws/s3'
 
@@ -18,13 +18,13 @@ Rake::TestTask.new do |test|
 end
 
 namespace :doc do
-  Rake::RDocTask.new do |rdoc|  
-    rdoc.rdoc_dir = 'doc'  
-    rdoc.title    = "AWS::S3 -- Support for Amazon S3's REST api"  
+  Rake::RDocTask.new do |rdoc|
+    rdoc.rdoc_dir = 'doc'
+    rdoc.title    = "AWS::S3 -- Support for Amazon S3's REST api"
     rdoc.options << '--line-numbers' << '--inline-source'
     rdoc.rdoc_files.include('README')
     rdoc.rdoc_files.include('COPYING')
-    rdoc.rdoc_files.include('INSTALL')    
+    rdoc.rdoc_files.include('INSTALL')
     rdoc.rdoc_files.include('lib/**/*.rb')
   end
   
@@ -80,7 +80,7 @@ namespace :dist do
   end
     
   # Regenerate README before packaging
-  Rake::GemPackageTask.new(spec) do |pkg|
+  Gem::PackageTask.new(spec) do |pkg|
     pkg.need_tar_gz = true
     pkg.package_files.include('{lib,script,test,support}/**/*')
     pkg.package_files.include('README')

@@ -12,4 +12,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency(%q<xml-simple>, [">= 0"])
   s.add_runtime_dependency(%q<builder>, [">= 0"])
   s.add_runtime_dependency(%q<mime-types>, [">= 0"])
+
+  s.add_development_dependency "rdoc", ">= 2.4.2"
 end
