@@ -1,5 +1,6 @@
-#:stopdoc:
+# encoding: ascii
 
+#:stopdoc:
 class Hash
   def to_query_string(include_question_mark = true)
     query_string = ''
